@@ -17,6 +17,9 @@ except ImportError:
     Buzzer = None
     print("Warning: gpiozero not found. MorseInput will not work without hardware.")
 
+import wordsegment
+
+
 MORSE_CODE_DICT = {
     '.-': 'A', '-...': 'B', '-.-.': 'C', '-..': 'D', '.': 'E',
     '..-.': 'F', '--.': 'G', '....': 'H', '..': 'I', '.---': 'J',
@@ -40,7 +43,33 @@ class InputSource(ABC):
     @abstractmethod
     def close(self):
         """Cleanup resources."""
+    def close(self):
+        """Cleanup resources."""
         pass
+
+class InputPostProcessor:
+    def __init__(self):
+        print("Loading WordSegment...")
+        wordsegment.load()
+        print("WordSegment loaded.")
+
+    def process_input(self, raw_text):
+        """
+        Process raw input text:
+        1. Remove spaces and segment using wordsegment.
+        """
+        if not raw_text:
+            return ""
+
+        # 1. Word Segmentation
+        # Remove existing spaces to treat as a continuous stream of characters
+        clean_text = raw_text.replace(" ", "")
+        segmentation = wordsegment.segment(clean_text)
+        corrected_text = " ".join(segmentation)
+        
+        print(f"WordSegment Result: {corrected_text}")
+        return corrected_text
+
 
 class MorseInput(InputSource):
     def __init__(self, button_pin=Config.GPIO_BUTTON_PIN, buzzer_pin=Config.GPIO_BUZZER_PIN):

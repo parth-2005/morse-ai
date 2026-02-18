@@ -1,7 +1,7 @@
 import sys
 import os
 import time
-from src.input_handler import MorseInput, TextInput
+from src.input_handler import MorseInput, TextInput, InputPostProcessor
 from src.rag_engine import RAGEngine
 from src.tts_engine import TTSEngine
 import argparse
@@ -58,6 +58,10 @@ def main():
         return
 
     print("\n--- System Ready ---\n")
+
+    # Initialize Post Processor
+    post_processor = InputPostProcessor()
+
     if args.text:
         print("Type your query and press Enter.")
     else:
@@ -72,10 +76,15 @@ def main():
             
             if query:
                 print(f"\nReceived Query: {query}")
-                tts.speak(f"Querying: {query}")
+                tts.speak(f"Received input")
+
+                # Post-process input (Word Segmentation)
+                corrected_query = post_processor.process_input(query)
+                print(f"Corrected Query: {corrected_query}")
+                tts.speak(f"Corrected to: {corrected_query}")
                 
                 # Query RAG
-                answer = rag.query(query)
+                answer = rag.query(corrected_query)
                 print(f"Answer: {answer}")
                 
                 # Speak Answer

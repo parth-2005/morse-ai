@@ -27,7 +27,7 @@ class RAGEngine:
             
             print(f"Initializing LLM {Config.LLM_MODEL}...")
             # Configure LLM with hyperparameters
-            llm = OllamaLLM(
+            self.llm = OllamaLLM(
                 model=Config.LLM_MODEL,
                 temperature=Config.LLM_TEMPERATURE,
                 repeat_penalty=Config.LLM_REPEAT_PENALTY,
@@ -44,7 +44,7 @@ class RAGEngine:
             self.chain = (
                 {"context": retriever, "question": RunnablePassthrough()}
                 | prompt
-                | llm
+                | self.llm
                 | StrOutputParser()
             )
             print("RAG Engine Ready.")

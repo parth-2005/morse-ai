@@ -27,7 +27,7 @@ class Config:
     # Temperature (0.0 to 1.0)
     # Lower values (e.g., 0.1) make the output more deterministic and focused.
     # Higher values (e.g., 0.8) make the output more creative and random.
-    LLM_TEMPERATURE = 0.1
+    LLM_TEMPERATURE = 0.5
     
     # Context text size (num_main_tokens)
     # The maximum number of tokens the model can process (prompt + context + generation).
@@ -111,7 +111,8 @@ Answer:"""
     WORD_PAUSE = 1.20
     
     # Time of silence to assume the message is complete and submit it
-    SUBMIT_TIMEOUT = 3.0
+    SUBMIT_TIMEOUT = 10
+
 
     # Debounce time for button press (seconds)
     BOUNCE_TIME = 0.01
