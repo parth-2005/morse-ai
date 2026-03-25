@@ -4,3 +4,4 @@ Pillow>=10.3.0             # Image enhancement
 pyttsx3>=2.90              # Offline text-to-speech
 numpy>=1.26.0              # Array operations
 requests>=2.31.0           # HTTP calls to local Ollama server
+SpeechRecognition>=3.10.4  # Speech-to-text for push-to-talk voice input

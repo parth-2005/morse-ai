@@ -545,7 +545,6 @@ class AccessibleDocumentReader:
                     if key in (ord("q"), ord("Q"), 27):   # Q or ESC
                         self.tts.speak("Thank you for using the Accessible Document Reader. Goodbye.")
                         return
-
                 if frame is None:
                     self.tts.speak("I could not capture an image. Please try again.")
                     continue

@@ -14,10 +14,31 @@ from config import Config
 class RAGEngine:
     def __init__(self):
         self.chain = None
-        
+        self.ocr_chain = None
+        self.llm = None
+
+        print(f"Initializing LLM {Config.LLM_MODEL}...")
+        try:
+            # Configure LLM with hyperparameters
+            self.llm = ChatGoogleGenerativeAI(
+                model=Config.LLM_MODEL,
+                temperature=Config.LLM_TEMPERATURE,
+                google_api_key=Config.GOOGLE_API_KEY
+            )
+            self.ocr_chain = (
+                ChatPromptTemplate.from_template(
+                    "Summarize and explain the following scanned document for a visually impaired user: {query_text}"
+                )
+                | self.llm
+                | StrOutputParser()
+            )
+        except Exception as e:
+            print(f"Error initializing LLM: {e}")
+            return
+
         # Check if vector store exists
         if not os.path.exists(Config.VECTOR_STORE_PATH):
-            print(f"Warning: Vector store not found at {Config.VECTOR_STORE_PATH}. Please run ingest.py first.")
+            print(f"Warning: Vector store not found at {Config.VECTOR_STORE_PATH}. OCR mode is still available.")
             return
 
         print(f"Loading vector store from {Config.VECTOR_STORE_PATH}...")
@@ -25,15 +46,7 @@ class RAGEngine:
         try:
             vectorstore = FAISS.load_local(Config.VECTOR_STORE_PATH, embeddings, allow_dangerous_deserialization=True)
             print("Vector store loaded.")
-            
-            print(f"Initializing LLM {Config.LLM_MODEL}...")
-            # Configure LLM with hyperparameters
-            self.llm = ChatGoogleGenerativeAI(
-                model=Config.LLM_MODEL,
-                temperature=Config.LLM_TEMPERATURE,
-                google_api_key=Config.GOOGLE_API_KEY
-            )
-            
+
             retriever = vectorstore.as_retriever(search_kwargs={"k": Config.RETRIEVAL_K})
             
             # RAG Prompt
@@ -50,15 +63,26 @@ class RAGEngine:
         except Exception as e:
             print(f"Error loading RAG Engine: {e}")
 
-    def query(self, query_text):
-        """Retrieves relevant context and generates an answer using LangChain LCEL."""
+    def query(self, query_text, input_type="text"):
+        """Routes query by input type: OCR direct-to-LLM, others via retrieval chain."""
+        route = (input_type or "text").strip().lower()
+
+        if route == "ocr":
+            if not self.ocr_chain:
+                return "LLM is not initialized. Please check your Gemini configuration."
+
+            print("Processing OCR document directly with Gemini...")
+            try:
+                return self.ocr_chain.invoke({"query_text": query_text})
+            except Exception as e:
+                return f"Error generating OCR summary: {e}"
+
+        # morse/voice/text and other non-OCR inputs follow retrieval-augmented flow.
         if not self.chain:
             return "Knowledge base not loaded. Please run ingest.py."
-            
-        print(f"Querying: {query_text}")
-        
+
+        print(f"Querying ({route}): {query_text}")
         try:
-            response = self.chain.invoke(query_text)
-            return response
+            return self.chain.invoke(query_text)
         except Exception as e:
             return f"Error generating response: {e}"
