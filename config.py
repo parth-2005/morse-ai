@@ -21,32 +21,20 @@ class Config:
     # ==========================================
     # 2. LLM (Large Language Model) Settings
     # ==========================================
-    # Model name served by Ollama (e.g., "llama3.2:1b", "mistral", "llama2")
-    LLM_MODEL = "llama3.2:3b"
+    # Google API Key 
+    # Ensure you set this in your environment variables or .env file
+    GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "AIzaSyCywqdrRoD34LX40TxanovV_NTyIsB9Mgk")
+    
+    # Model name served by Google Gemini
+    LLM_MODEL = "gemini-2.5-flash"
     
     # Temperature (0.0 to 1.0)
-    # Lower values (e.g., 0.1) make the output more deterministic and focused.
-    # Higher values (e.g., 0.8) make the output more creative and random.
-    LLM_TEMPERATURE = 0.5
+    LLM_TEMPERATURE = 0.8
     
-    # Context text size (num_main_tokens)
-    # The maximum number of tokens the model can process (prompt + context + generation).
-    # Increase this if you have very long documents, but it requires more RAM.
-    # Default is often 2048 or 4096.
-    LLM_CONTEXT_SIZE = 2048
-    
-    # Number of threads to use for generation
-    # Set this to the number of physical CPU cores you want to dedicate.
-    LLM_NUM_THREADS = 4
-
-    # Repeat penalty
-    # Penalize the model for repeating the same tokens.
-    LLM_REPEAT_PENALTY = 1.1
-
     # ==========================================
     # 3. Embedding & Retrieval Settings
     # ==========================================
-    # Embedding model name (must be pulled in Ollama or consistent with LangChain)
+    # Embedding model name
     EMBEDDING_MODEL = "nomic-embed-text"
     
     # Text Splitter Settings
@@ -66,8 +54,7 @@ class Config:
     # {context} will be replaced by retrieved documents.
     # {question} will be replaced by the user's query.
     PROMPT_TEMPLATE = """You are a helpful educational assistant. Use the following pieces of context to answer the question at the end.
-If the answer is not in the context, say "I don't know the answer to that based on the provided documents."
-Keep the answer concise and easy to understand.
+Keep the answer easy to understand.
 
 Context:
 {context}
@@ -81,8 +68,9 @@ Answer:"""
     # ==========================================
     # Audio output device name (run 'aplay -L' to see available devices)
     # Common options: 'default', 'bluealsa', 'hw:0,0'
-    TTS_DEVICE = "bluealsa"
-    
+    # TTS_DEVICE = "bluealsa"
+    # In config.py
+    TTS_DEVICE = "bluealsa:SRV=org.bluealsa,DEV=36:D5:7C:06:A2:28,PROFILE=a2dp"    
     # Volume (0 to 100, though implementation might depend on system)
     TTS_VOLUME = 80
     

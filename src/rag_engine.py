@@ -4,7 +4,8 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from langchain_community.vectorstores import FAISS
-from langchain_ollama import OllamaEmbeddings, OllamaLLM
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_ollama import OllamaEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
@@ -27,12 +28,10 @@ class RAGEngine:
             
             print(f"Initializing LLM {Config.LLM_MODEL}...")
             # Configure LLM with hyperparameters
-            self.llm = OllamaLLM(
+            self.llm = ChatGoogleGenerativeAI(
                 model=Config.LLM_MODEL,
                 temperature=Config.LLM_TEMPERATURE,
-                repeat_penalty=Config.LLM_REPEAT_PENALTY,
-                num_ctx=Config.LLM_CONTEXT_SIZE,
-                num_thread=Config.LLM_NUM_THREADS
+                google_api_key=Config.GOOGLE_API_KEY
             )
             
             retriever = vectorstore.as_retriever(search_kwargs={"k": Config.RETRIEVAL_K})
