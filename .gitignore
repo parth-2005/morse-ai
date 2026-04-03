@@ -42,3 +42,6 @@ query.txt
 .lgd-nfy0
 accessible_reader.log
 # config.py
+.env.local
+venv/
+__pycache__/

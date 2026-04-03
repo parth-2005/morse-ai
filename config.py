@@ -7,6 +7,9 @@ Modify these values to tune the performance of the system.
 """
 
 import os
+from dotenv import load_dotenv
+
+load_dotenv(".env.local")
 
 class Config:
     # ==========================================
@@ -24,7 +27,7 @@ class Config:
     # Google API Key 
     # Ensure you set this in your environment variables or .env file
     GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
-    
+    print(f"Using Google API Key: {'SET' if GOOGLE_API_KEY else 'NOT SET'}")
     # Model name served by Google Gemini
     LLM_MODEL = "gemini-2.5-flash"
     
