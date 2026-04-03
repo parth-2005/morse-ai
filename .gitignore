@@ -41,4 +41,4 @@ debug_images//
 query.txt
 .lgd-nfy0
 accessible_reader.log
-config.py
+# config.py

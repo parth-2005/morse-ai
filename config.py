@@ -23,7 +23,7 @@ class Config:
     # ==========================================
     # Google API Key 
     # Ensure you set this in your environment variables or .env file
-    GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "AIzaSyCywqdrRoD34LX40TxanovV_NTyIsB9Mgk")
+    GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
     
     # Model name served by Google Gemini
     LLM_MODEL = "gemini-2.5-flash"
